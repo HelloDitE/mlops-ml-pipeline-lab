@@ -89,13 +89,11 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Cleaned dataset.
     """
     logger.info("Cleaning dataset...")
-    # 👉 YOUR CODE HERE:
-    # - Strip column names (use df.columns.str.strip())
-    # - Remove duplicates (use df.drop_duplicates())
-    # - Drop missing values (use df.dropna())
-    # - Log final shape
-    # - Return the cleaned DataFrame
-    
+    df.columns = df.columns.str.strip()
+    df = df.drop_duplicates()
+    df = df.dropna()
+    logger.info(f"Cleaned dataset shape: {df.shape}")
+    return df
 
 
 def save_data(df: pd.DataFrame, output_data_filename: str) -> Path:
@@ -109,11 +107,11 @@ def save_data(df: pd.DataFrame, output_data_filename: str) -> Path:
     Returns:
         Path: The path where the cleaned file was saved.
     """
-    # 👉 YOUR CODE HERE:
-    # - Define output_path = OUTPUT_DIR / output_data_filename
-    # - Save DataFrame to CSV (index=False)
-    # - Add logging.info message for confirmation
-    # - Return the output_path
+    output_path = OUTPUT_DIR / output_data_filename
+    logger.info(f"Saving cleaned data to: {output_path}")
+    df.to_csv(output_path, index=False)
+    logger.info("Data saved successfully.")
+    return output_path
     
 
 
@@ -134,14 +132,15 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--input_data_path",
         type=str,
-        required=True,
+        required=False,
+        default=str(DATASTORE_DIR / "raw_data" / "housing.csv"),
         help="Path to the raw input CSV file (e.g., ../datastores/raw_data/data.csv).",
     )
 
     parser.add_argument(
         "--output_data_filename",
         type=str,
-        required=True,
+        required=False,
         default="clean_housing.csv",
         help="Output filename (will be stored under ../datastores/clean_data/)",
     )
@@ -159,11 +158,12 @@ def main() -> None:
     """
     args = parse_arguments()
 
-    # 👉 YOUR CODE HERE:
     # - Call load_data() with args.input_data_path
     # - Call clean_data() on the loaded DataFrame
     # - Call save_data() with cleaned DataFrame and args.output_data_filename
-    
+    raw_df = load_data(args.input_data_path)
+    cleaned_df = clean_data(raw_df)
+    save_data(cleaned_df, args.output_data_filename)
 
 
 if __name__ == "__main__":

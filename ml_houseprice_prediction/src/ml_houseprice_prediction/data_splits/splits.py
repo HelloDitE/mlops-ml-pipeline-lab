@@ -97,9 +97,11 @@ def splits_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("splits dataset...")
 
-    # 👉 YOUR CODE HERE:
     # - Use train_test_split(df, ...)
     # - Return df_train, df_test
+    df_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
+    logger.info(f"splits dataset shape: train={df_train.shape}, test={df_test.shape}")
+    return df_train, df_test
 
 
 # -------------------------------------------------------------------
@@ -124,10 +126,13 @@ def save_data(df_train: pd.DataFrame, df_test: pd.DataFrame) -> Path:
         "test_data.csv": df_test,
     }
     for filename, df in file_paths.items():
-        ## YOUR CODE HERE
+
         # Save train_data.csv and test_data.csv in OUTPUT_DIR
+        output_path = OUTPUT_DIR / filename
+        df.to_csv(output_path, index=False)
 
         logger.info(f"Save split data : {filename}: into datastores.")
+        
 
 
 # -------------------------------------------------------------------
@@ -147,7 +152,8 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--input_data_path",
         type=str,
-        required=True,
+        required=False,
+        default=str(DATASTORE_DIR / "clean_data" / "clean_housing.csv"),
         help="Path to the raw input CSV file (e.g., ../datastores/raw_data/data.csv).",
     )
 
@@ -165,11 +171,12 @@ def main() -> None:
     """
     args = parse_arguments()
 
-    # 👉 YOUR CODE HERE:
     # - Call df_clean=load_data(...) with args.input_data_path
     # - Call df_train, df_test=split_data(...) on the clean data `df_clean`
     # - Call save_data(...) on the split data `df_train`, `df_test`
-
+    df_clean = load_data(args.input_data_path)
+    df_train, df_test = splits_data(df_clean)
+    save_data(df_train, df_test)
 
 
 if __name__ == "__main__":

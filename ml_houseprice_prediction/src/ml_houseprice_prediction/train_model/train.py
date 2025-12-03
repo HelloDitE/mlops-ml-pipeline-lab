@@ -113,10 +113,10 @@ def train_model(
 
     logger.info("Training Linear Regression model...")
     # 1. Define the model (e.g., LinearRegression)
-    model = ## you code here
+    model = LinearRegression()
 
     # 2. Train the model using fit method
-    ## your code here
+    model.fit(X_train, y_train)
 
     logger.info("Evaluating model on TRAIN set...")
     train_pred = model.predict(X_train)
@@ -124,8 +124,8 @@ def train_model(
     logger.info(f"Train MSE: {train_mse:.4f}")
 
     logger.info("Evaluating model on TEST set...")
-    test_pred =  ## your code here
-    test_mse  =  ## your code here
+    test_pred =  model.predict(X_test)
+    test_mse  = mean_squared_error(y_test, test_pred)
     logger.info(f"Test MSE: {test_mse:.4f}")
 
     # Save model
@@ -151,21 +151,23 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--input_train_data",
         type=str,
-        required=True,
+        required=False,
+        default=str(DATASTORE_DIR / "splits_data" / "train_data.csv"),
         help="Path to the training CSV file.",
     )
 
     parser.add_argument(
         "--input_test_data",
         type=str,
-        required=True,
+        required=False,
+        default=str(DATASTORE_DIR / "splits_data" / "test_data.csv"),
         help="Path to the testing CSV file.",
     )
 
     parser.add_argument(
         "--model_filename",
         type=str,
-        required=True,
+        required=False,
         default='LinearRegression.joblib',
         help="Output model filename with extension .joblib (stored in modelstores/).",
     )
@@ -183,7 +185,7 @@ def main() -> None:
     """
     args = parse_arguments()
 
-    # 👉 YOUR CODE HERE:
+
     # - Call train_model() with:
     #   args.input_train_data
     #   args.input_test_data
@@ -195,8 +197,12 @@ def main() -> None:
     #     input_test_data=args.input_test_data,
     #     model_filename=args.model_filename
     # )
+    train_model(
+        input_train_data=args.input_train_data,
+        input_test_data=args.input_test_data,
+        model_filename=args.model_filename
+    )
 
-    
 
 
 if __name__ == "__main__":
